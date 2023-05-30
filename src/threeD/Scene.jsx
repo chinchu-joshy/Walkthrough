@@ -12,15 +12,7 @@ function Three() {
   let clock;
   let walker;
   let camera;
-  const style={
-    
-      display: load ===true ?"none" : "block",
-      width: load===false && "100vw",
-      height: load===false && "100vh"
-    
-  }
   useEffect(() => {
-    
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x151922);
     const canvas = document.querySelector("#canvas");
@@ -47,18 +39,26 @@ function Three() {
     camera.lookAt(0, 50, 0);
     const manager = new THREE.LoadingManager();
     manager.onStart = function (url, itemsLoaded, itemsTotal) {
-      setLoad(true)
+      console.log(
+        "Started loading file: " +
+          url +
+          ".\nLoaded " +
+          itemsLoaded +
+          " of " +
+          itemsTotal +
+          " files."
+      );
     };
 
     manager.onLoad = function () {
       console.log("loaded")
-      setLoad(false)
+      setLoad(true)
     };
 
     manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-      // if(itemsLoaded === itemsTotal){
-      //   setLoad(false)
-      // }
+      if(itemsLoaded === itemsTotal){
+        setLoad(false)
+      }
     };
 
     manager.onError = function (url) {
@@ -202,56 +202,14 @@ function Three() {
     }
     animate();
   }, []);
-//   window.addEventListener("resize", onWindowResize);
-  window.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowUp") {
-      walker.scene.rotation.y = -Math.PI;
-      walker.animations.forEach((clip) => {
-        mixer.clipAction(clip).play();
-      });
-    walker.scene.position.z -= 0.2;
-    }
-    if (e.key === "ArrowDown") {
-      walker.scene.rotation.y = Math.PI;
-      walker.animations.forEach((clip) => {
-        mixer.clipAction(clip).play();
-      });
-      walker.scene.position.z += 0.2;
-     
-    }
-    if (e.key === "ArrowRight") {
-      walker.scene.rotation.y = 0.1;
-    }
-    if (e.key === "ArrowLeft") {
-      walker.scene.rotation.y = -0.1;
-    }
-  });
-  window.addEventListener("keyup", function (e) {
-    walker.animations.forEach((clip) => {
-      mixer.stopAllAction()
-    });
-  });
 
-// stop() {
-//   this.speed.rotation = 0;
-//   this.speed.velocity = 0;
-// }
-// update() {
-//   if (this.boatmodel) {
-//     this.boatmodel.rotation.y += this.speed.rotation;
-//     this.boatmodel.translateX(this.speed.velocity);
-//   } else {
-   
-//   }
-// }
+ 
   return (
     <>
-   
+    {load && <Loader/>}
       <div className="canvas-container">
         {" "}
-        {load === true && <Loader/>}
-        <canvas id="canvas" style={{style}} ref={textInput}>
-        </canvas>
+        <canvas id="canvas" ref={textInput}></canvas>
       </div>
     </>
   );

@@ -12,15 +12,7 @@ function Three() {
   let clock;
   let walker;
   let camera;
-  const style={
-    
-      display: load ===true ?"none" : "block",
-      width: load===false && "100vw",
-      height: load===false && "100vh"
-    
-  }
   useEffect(() => {
-    
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x151922);
     const canvas = document.querySelector("#canvas");
@@ -47,18 +39,26 @@ function Three() {
     camera.lookAt(0, 50, 0);
     const manager = new THREE.LoadingManager();
     manager.onStart = function (url, itemsLoaded, itemsTotal) {
-      setLoad(true)
+      console.log(
+        "Started loading file: " +
+          url +
+          ".\nLoaded " +
+          itemsLoaded +
+          " of " +
+          itemsTotal +
+          " files."
+      );
     };
 
     manager.onLoad = function () {
       console.log("loaded")
-      setLoad(false)
+      setLoad(true)
     };
 
     manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-      // if(itemsLoaded === itemsTotal){
-      //   setLoad(false)
-      // }
+      if(itemsLoaded === itemsTotal){
+        setLoad(false)
+      }
     };
 
     manager.onError = function (url) {
@@ -246,12 +246,10 @@ function Three() {
 // }
   return (
     <>
-   
+    {load && <Loader/>}
       <div className="canvas-container">
         {" "}
-        {load === true && <Loader/>}
-        <canvas id="canvas" style={{style}} ref={textInput}>
-        </canvas>
+        <canvas id="canvas" ref={textInput}></canvas>
       </div>
     </>
   );
