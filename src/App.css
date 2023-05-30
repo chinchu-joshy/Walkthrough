@@ -44,6 +44,14 @@
   justify-content: center;
   align-items: center;
 }
-.loader-main div p{
-  color: rgb(160, 36, 51);
+.loader-main div h3{
+  color: rgb(244, 240, 241);
+}
+
+.progress {
+  background-color: rgb(207, 208, 210);
+  height: 5px;
+  border-radius: 1rem;
+  transition: 0.01s ease-in-out;
+  
 }

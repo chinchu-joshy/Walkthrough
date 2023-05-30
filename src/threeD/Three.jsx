@@ -8,10 +8,13 @@ import Loader from "./Loader";
 function Three() {
   const textInput = useRef(null);
   const [load, setLoad] = useState(true)
+  const [itemsLoaded, setItemsLoaded] = useState(1)
+  const [itemsTotal, setITemsTotal] = useState(5)
   let mixer;
   let clock;
   let walker;
   let camera;
+  const manager = new THREE.LoadingManager();
   const style={
     
       display: load ===true ?"none" : "block",
@@ -45,7 +48,7 @@ function Three() {
     camera.position.set(0, 0, 2);
     camera.rotation.x = -26.57;
     camera.lookAt(0, 50, 0);
-    const manager = new THREE.LoadingManager();
+    
     manager.onStart = function (url, itemsLoaded, itemsTotal) {
       setLoad(true)
     };
@@ -55,7 +58,14 @@ function Three() {
       setLoad(false)
     };
 
-    manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+    manager.onProgress = function (url, itemLoaded, itemTotal) {
+      
+      // itemsLoaded=itemLoaded;
+      // itemsTotal=itemTotal;
+      setItemsLoaded(itemLoaded);
+      setITemsTotal(itemTotal);
+      // return <Loader width={400} test={manager}></Loader>
+      // console.log(itemLoaded,itemTotal)
       // if(itemsLoaded === itemsTotal){
       //   setLoad(false)
       // }
@@ -83,7 +93,7 @@ function Three() {
             child.material.needsUpdate = true;
           }
           if (child.name.includes("Plane")) {
-            console.log("loaded the final");
+           
             const texture = new THREE.TextureLoader();
             texture.load(
               "./model/vampire-castle-corridor/textures/CorridorFloor.png",
@@ -94,7 +104,7 @@ function Three() {
             );
           }
           if (child.name.includes("corridorpCube")) {
-            console.log("loaded the final");
+            
             const texture = new THREE.TextureLoader();
             texture.load(
               "./model/vampire-castle-corridor/textures/CorridorBricksAligned.png",
@@ -249,8 +259,9 @@ function Three() {
     <>
    
       <div className="canvas-container">
-        {" "}
-        {load === true && <Loader/>}
+       
+        {
+        load === true && <Loader width={400} test={{loaded:itemsLoaded, total:itemsTotal}}/>}
         <canvas id="canvas" style={{style}} ref={textInput}>
         </canvas>
       </div>
