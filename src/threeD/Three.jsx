@@ -201,36 +201,37 @@ function Three() {
       controls.update();
     }
     animate();
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp") {
+        walker.scene.rotation.y = -Math.PI;
+        walker.animations.forEach((clip) => {
+          mixer.clipAction(clip).play();
+        });
+      walker.scene.position.z -= 0.2;
+      }
+      if (e.key === "ArrowDown") {
+        walker.scene.rotation.y = Math.PI;
+        walker.animations.forEach((clip) => {
+          mixer.clipAction(clip).play();
+        });
+        walker.scene.position.z += 0.2;
+       
+      }
+      if (e.key === "ArrowRight") {
+        walker.scene.rotation.y = 0.1;
+      }
+      if (e.key === "ArrowLeft") {
+        walker.scene.rotation.y = -0.1;
+      }
+    });
+    window.addEventListener("keyup", function (e) {
+      walker.animations.forEach((clip) => {
+        mixer.stopAllAction()
+      });
+    });
   }, []);
 //   window.addEventListener("resize", onWindowResize);
-  window.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowUp") {
-      walker.scene.rotation.y = -Math.PI;
-      walker.animations.forEach((clip) => {
-        mixer.clipAction(clip).play();
-      });
-    walker.scene.position.z -= 0.2;
-    }
-    if (e.key === "ArrowDown") {
-      walker.scene.rotation.y = Math.PI;
-      walker.animations.forEach((clip) => {
-        mixer.clipAction(clip).play();
-      });
-      walker.scene.position.z += 0.2;
-     
-    }
-    if (e.key === "ArrowRight") {
-      walker.scene.rotation.y = 0.1;
-    }
-    if (e.key === "ArrowLeft") {
-      walker.scene.rotation.y = -0.1;
-    }
-  });
-  window.addEventListener("keyup", function (e) {
-    walker.animations.forEach((clip) => {
-      mixer.stopAllAction()
-    });
-  });
+ 
 
 // stop() {
 //   this.speed.rotation = 0;
