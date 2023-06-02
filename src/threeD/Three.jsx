@@ -1,39 +1,38 @@
 import { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-import { TGALoader } from "three/examples/jsm/loaders/TGALoader";
+import loadModel from "./LoadAsset";
 import Loader from "./Loader";
-function Three() {
+function Three({path}) {
+    
   const textInput = useRef(null);
-  const [load, setLoad] = useState(true)
-  const [itemsLoaded, setItemsLoaded] = useState(1)
-  const [itemsTotal, setITemsTotal] = useState(5)
+  const [load, setLoad] = useState(true);
+  const [itemsLoaded, setItemsLoaded] = useState(1);
+  const [itemsTotal, setITemsTotal] = useState(5);
+  let format =true;
   let mixer;
-  let clock;
   let walker;
   let camera;
-  const manager = new THREE.LoadingManager();
-  const style={
-    
-      display: load ===true ?"none" : "block",
-      width: load===false && "100vw",
-      height: load===false && "100vh"
-    
-  }
-  useEffect(() => {
-    
-    const scene = new THREE.Scene();
+  let renderer;
+  let scene;
+  let controls;
+  let Path;
+  let clock = new THREE.Clock();
+  const style = {
+    display: load === true ? "none" : "block",
+    width: load === false && "100vw",
+    height: load === false && "100vh",
+  };
+  async function init() {
+    scene = new THREE.Scene();
     scene.background = new THREE.Color(0x151922);
     const canvas = document.querySelector("#canvas");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-    // renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 1.25;
-    // renderer.shadowMap.enabled = true;
-    let Buildingmodel;
-    clock = new THREE.Clock();
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    renderer.shadowMap.enabled = true;
+
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
     camera = new THREE.PerspectiveCamera(
@@ -43,139 +42,9 @@ function Three() {
       1000
     );
 
-    //const loader = new GLTFLoader();
-    let flag = false;
     camera.position.set(0, 0, 2);
     camera.rotation.x = -26.57;
     camera.lookAt(0, 50, 0);
-    
-    manager.onStart = function (url, itemsLoaded, itemsTotal) {
-      setLoad(true)
-    };
-
-    manager.onLoad = function () {
-      console.log("loaded")
-      setLoad(false)
-    };
-
-    manager.onProgress = function (url, itemLoaded, itemTotal) {
-      
-      // itemsLoaded=itemLoaded;
-      // itemsTotal=itemTotal;
-      setItemsLoaded(itemLoaded);
-      setITemsTotal(itemTotal);
-      // return <Loader width={400} test={manager}></Loader>
-      // console.log(itemLoaded,itemTotal)
-      // if(itemsLoaded === itemsTotal){
-      //   setLoad(false)
-      // }
-    };
-
-    manager.onError = function (url) {
-      console.log("There was an error loading " + url);
-    };
-    const loader = new FBXLoader(manager);
-    loader.load(
-      "./model/vampire-castle-corridor/source/EthanVampireCorridor/SM_EthanVampireCorridor.fbx",
-      (model) => {
-        window.model = model;
-        model.position.y = -10;
-        // model.rotation.x =-Math.PI/2
-        const group = new THREE.Group();
-        group.attach(model);
-        //scene.add(group)
-        //  model.scale.set(.01,.01,.01)
-
-        console.log("loaded the final");
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.material.color = new THREE.Color(0x5e6069);
-            child.material.needsUpdate = true;
-          }
-          if (child.name.includes("Plane")) {
-           
-            const texture = new THREE.TextureLoader();
-            texture.load(
-              "./model/vampire-castle-corridor/textures/CorridorFloor.png",
-              (texture) => {
-                child.material.map = texture;
-                child.material.needsUpdate = true;
-              }
-            );
-          }
-          if (child.name.includes("corridorpCube")) {
-            
-            const texture = new THREE.TextureLoader();
-            texture.load(
-              "./model/vampire-castle-corridor/textures/CorridorBricksAligned.png",
-              (texture) => {
-                child.material.map = texture;
-                child.material.needsUpdate = true;
-              }
-            );
-          }
-          if (child.isMesh && child.name.includes("pCylinder")) {
-            console.log("loaded the final");
-            const texture = new THREE.TextureLoader();
-            texture.load(
-              "./model/vampire-castle-corridor/textures/CorridorRoof.png",
-              (texture) => {
-                child.material.map = texture;
-                child.material.needsUpdate = true;
-              }
-            );
-          }
-          if (
-            child.isMesh &&
-            (child.name.includes("polySurface51") ||
-              child.name.includes("polySurface69"))
-          ) {
-            console.log("loaded the final");
-            const texture = new THREE.TextureLoader();
-            texture.load(
-              "./model/vampire-castle-corridor/textures/CorridorDoorFrame.png",
-              (texture) => {
-                child.material.map = texture;
-                child.material.needsUpdate = true;
-              }
-            );
-          }
-          // const tgaloader = new TGALoader();
-          // const texture1 = tgaloader.load(
-          //   "./model/vampire-castle-corridor/source/EthanVampireCorridor/CorridorDoor.tga"
-          // );
-          // texture1.colorSpace = THREE.SRGBColorSpace;
-          // const door = new THREE.BoxGeometry(10, 10, 2);
-          // const material1 = new THREE.MeshPhongMaterial({
-          //   color: 0xffffff,
-          //   map: texture1,
-          // });
-
-          // const mesh1 = new THREE.Mesh(door, material1);
-          // mesh1.position.x = -50;
-          // scene.add(mesh1);
-        });
-
-        //EthanBarrelUVBlood
-        //pCylinder
-
-        scene.add(model);
-      }
-    );
-
-    const loaderMiya = new GLTFLoader(manager);
-    loaderMiya.load("./model/character_walk/scene.gltf", (model) => {
-      scene.add(model.scene);
-      mixer = new THREE.AnimationMixer(model.scene);
-      model.scene.position.y = -10;
-      model.scene.position.z = -20;
-      model.scene.scale.set(5, 5, 5);
-      model.scene.rotation.y = -Math.PI;
-      model.scene.attach(camera);
-      camera.updateProjectionMatrix();
-      walker = model;
-     
-    });
 
     const light = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
     scene.add(light);
@@ -190,80 +59,125 @@ function Three() {
     //     const helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
     // scene.add( helper );
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.enableZoom = true;
     controls.minPolarAngle = 0; // radians
     controls.maxPolarAngle = Math.PI / 2.1; // radians
     controls.update();
-   
-    function animate() {
-      requestAnimationFrame(animate);
-      var delta = clock.getDelta();
-
-      if (mixer) mixer.update(delta);
-      if (walker) {
+    if(path){
         
-        camera.lookAt(walker.scene.position.x,walker.scene.position.y+5,walker.scene.position.z)
+        Path= path.modelPath
+        format = false
 
-      }
-      
-      renderer.render(scene, camera);
-      controls.update();
+
+
+    } else {
+        Path = "vampire-castle-corridor/source/EthanVampireCorridor/SM_EthanVampireCorridor"
     }
-    animate();
-    window.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowUp") {
-        walker.scene.rotation.y = -Math.PI;
-        walker.animations.forEach((clip) => {
-          mixer.clipAction(clip).play();
-        });
-      walker.scene.position.z -= 0.2;
-      }
-      if (e.key === "ArrowDown") {
-        walker.scene.rotation.y = Math.PI;
-        walker.animations.forEach((clip) => {
-          mixer.clipAction(clip).play();
-        });
-        walker.scene.position.z += 0.2;
-       
-      }
-      if (e.key === "ArrowRight") {
-        walker.scene.rotation.y = 0.1;
-      }
-      if (e.key === "ArrowLeft") {
-        walker.scene.rotation.y = -0.1;
-      }
-    });
-    window.addEventListener("keyup", function (e) {
-      walker.animations.forEach((clip) => {
-        mixer.stopAllAction()
-      });
-    });
-  }, []);
-//   window.addEventListener("resize", onWindowResize);
- 
 
-// stop() {
-//   this.speed.rotation = 0;
-//   this.speed.velocity = 0;
-// }
-// update() {
-//   if (this.boatmodel) {
-//     this.boatmodel.rotation.y += this.speed.rotation;
-//     this.boatmodel.translateX(this.speed.velocity);
-//   } else {
-   
-//   }
-// }
+    await loadModel(
+        Path,
+      scene,
+      setLoad,
+      load,
+      setItemsLoaded,
+      setITemsTotal,
+      format
+    ).then((data) => {
+      walker = data.model;
+      if (data.status && walker) {
+        mixer = data.mixer;
+       
+        window.addEventListener("mousemove",(e)=>{
+            e.preventDefault();
+            
+            console.log(e)
+          const data =  scene.getObjectByName("corridor")
+          
+        // controls.target.x += e.offsetX /1000
+        // controls.target.y += e.offsetY / 1000
+         
+        })
+        window.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowUp") {
+            walker.scene.attach(camera);
+            camera.lookAt(walker.scene.position)
+            camera.updateProjectionMatrix();
+            walker.scene.rotation.y = -Math.PI;
+            walker.animations.forEach((clip) => {
+              mixer.clipAction(clip).play();
+            });
+            walker.scene.position.z -= 0.2;
+          }
+          if (e.key === "ArrowDown") {
+            walker.rotation.y = Math.PI;
+            walker.animations.forEach((clip) => {
+              mixer.clipAction(clip).play();
+            });
+            walker.position.z += 0.2;
+          }
+          if (e.key === "ArrowRight") {
+            walker.rotation.y = 0.1;
+          }
+          if (e.key === "ArrowLeft") {
+            walker.rotation.y = -0.1;
+          }
+        });
+        window.addEventListener("keyup", function (e) {
+          walker.animations.forEach((clip) => {
+            mixer.stopAllAction();
+          });
+        });
+      }
+    });
+  }
+  function animate() {
+    requestAnimationFrame(animate);
+
+    let delta = clock.getDelta();
+    if (mixer) {
+      mixer.update(delta);
+    }
+    if (walker) {
+      camera.lookAt(
+        walker.scene.position.x,
+        walker.scene.position.y + 5,
+        walker.scene.position.z
+      );
+    }
+
+    renderer.render(scene, camera);
+    controls.update();
+  }
+  useEffect(() => {
+    init();
+
+    animate();
+  }, []);
+  //   window.addEventListener("resize", onWindowResize);
+
+  // stop() {
+  //   this.speed.rotation = 0;
+  //   this.speed.velocity = 0;
+  // }
+  // update() {
+  //   if (this.boatmodel) {
+  //     this.boatmodel.rotation.y += this.speed.rotation;
+  //     this.boatmodel.translateX(this.speed.velocity);
+  //   } else {
+
+  //   }
+  // }
   return (
     <>
-   
       <div className="canvas-container">
-       
-        {
-        load === true && <Loader width={400} test={{loaded:itemsLoaded, total:itemsTotal}}/>}
-        <canvas id="canvas" style={{style}} ref={textInput}>
-        </canvas>
+        {load === true && (
+          <Loader
+            width={400}
+            test={{ loaded: itemsLoaded, total: itemsTotal }}
+          />
+        )}
+        <canvas id="canvas" style={{ style }} ref={textInput}></canvas>
       </div>
     </>
   );
