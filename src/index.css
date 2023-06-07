@@ -1,3 +1,6 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,6 +10,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-y: hidden; 
   overflow-x: hidden;
+  font-family: 'Orbitron', sans-serif;
 }
 
 code {

@@ -31,7 +31,7 @@ function loadModel(
       const group = new THREE.Group();
       group.attach(model);
       //scene.add(group)
-      //  model.scale.set(.01,.01,.01)
+        //model.scale.set(.01,.01,.01)
 
       model.traverse((child) => {
         if (child.isMesh) {

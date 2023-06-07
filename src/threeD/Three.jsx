@@ -4,7 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import loadModel from "./LoadAsset";
 import Loader from "./Loader";
 function Three({path}) {
-    
+
   const textInput = useRef(null);
   const [load, setLoad] = useState(true);
   const [itemsLoaded, setItemsLoaded] = useState(1);
@@ -87,17 +87,19 @@ function Three({path}) {
       walker = data.model;
       if (data.status && walker) {
         mixer = data.mixer;
-       
+       if(format === false) {
+
         window.addEventListener("mousemove",(e)=>{
-            e.preventDefault();
-            
-            console.log(e)
-          const data =  scene.getObjectByName("corridor")
-          
-        // controls.target.x += e.offsetX /1000
-        // controls.target.y += e.offsetY / 1000
-         
-        })
+          e.preventDefault();
+
+        const data =  scene.getObjectByName("corridor")
+        
+      // controls.target.x += e.offsetX /1000
+     controls.target.y += 0.01
+       
+      })
+       }
+       
         window.addEventListener("keydown", function (e) {
           if (e.key === "ArrowUp") {
             walker.scene.attach(camera);
