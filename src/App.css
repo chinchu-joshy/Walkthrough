@@ -88,3 +88,20 @@
 .content p{
   width: 500px
 }
+.about{
+  z-index: 99;
+  position: absolute;
+
+}
+#parent{
+  z-index: 999;
+  position: absolute;
+  top: 0px;
+
+}
+/* #content{
+  z-index: 999;
+  position: absolute;
+  top: 0px;
+
+} */
